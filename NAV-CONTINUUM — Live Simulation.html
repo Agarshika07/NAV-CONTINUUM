@@ -1,0 +1,180 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>NAV-CONTINUUM — Continuous Vehicle Navigation Beyond GNSS</title><style>*{box-sizing:border-box}body{margin:0;background:radial-gradient(#0b1730,#02040a 70%);color:#cfe3ff;font:14px/1.4 "Segoe UI",system-ui,sans-serif}
+header{display:flex;align-items:center;gap:24px;padding:14px 24px;border-bottom:1px solid #12305a;flex-wrap:wrap}
+.logo{font:800 30px/1 "Segoe UI";letter-spacing:3px;color:#fff}.logo span{color:#22e6ff}.sub{font-size:16px;color:#7fb4ff}.sub small{color:#6a86a8}
+.badge{margin-left:auto;border:1px solid #ff3b4d;color:#ff7a86;padding:4px 10px;border-radius:20px;font-size:12px}
+.tag{text-align:center;margin:10px;font-style:italic;color:#22e6ff}
+.bar{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;padding:0 16px}
+button,select{background:#0f2447;color:#cfe3ff;border:1px solid #2563eb;padding:9px 14px;border-radius:8px;font-weight:600;cursor:pointer}button:hover{background:#17376b}
+.go{background:#0891b2;color:#fff;border-color:#22e6ff}.bad{background:#7f1020;border-color:#ff3b4d;color:#fff;font-size:15px}.ok{background:#0b4a3a;border-color:#2dd4a0;color:#fff;font-size:15px}
+.narr{text-align:center;min-height:26px;margin:10px;color:#fff;font-size:16px}
+main{display:grid;grid-template-columns:repeat(12,1fr);gap:14px;padding:14px 20px}.c4{grid-column:span 4}.c6{grid-column:span 6}.c8{grid-column:span 8}.c12{grid-column:span 12}
+.card{background:rgba(10,22,44,.85);border:1px solid #12305a;border-radius:12px;padding:14px;min-width:0}
+h2{margin:0 0 10px;font-size:13px;letter-spacing:2px;color:#22e6ff}h2 i{color:#6a86a8;font-weight:400;letter-spacing:0;font-size:11px;margin-left:8px}
+canvas{width:100%;display:block;background:#050c1c;border-radius:8px}label{display:block;font-size:12px;color:#7fa0c0;margin:8px 0 3px}
+.legend{display:flex;gap:16px;flex-wrap:wrap;font-size:12px;margin-top:6px}
+.met{display:grid;grid-template-columns:1fr 1fr;gap:8px}.m{background:#07142b;border:1px solid #12305a;border-radius:8px;padding:7px}.m small{display:block;color:#6a86a8;font-size:11px}.m b{font:600 14px ui-monospace,Consolas,monospace;color:#fff}
+.target{margin-top:10px;padding:10px;border:1px dashed #22e6ff;border-radius:8px;text-align:center;color:#22e6ff;font-weight:700}.target small{color:#6a86a8;font-weight:400}
+.hero{border-color:#22e6ff;box-shadow:0 0 30px #22e6ff30}.herogrid{display:grid;grid-template-columns:1.2fr .8fr 1.2fr;gap:16px;align-items:start}
+.big{text-align:center;padding:6px}.big small{display:block;color:#7fa0c0;font-size:12px;letter-spacing:2px}.big b{display:block;font:800 40px ui-monospace,Consolas,monospace;margin-bottom:10px}.cy{color:#22e6ff;font-size:64px!important;text-shadow:0 0 24px #22e6ff}
+.note{font-size:11px;color:#ff9aa4}input[type=range]{width:100%}
+.sens{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.pipe{display:flex;flex-wrap:wrap;gap:6px}.st{padding:6px 8px;border:1px solid #1d3b6b;border-radius:6px;font-size:11px;color:#6a86a8;transition:.2s}
+.st.on{color:#fff;border-color:#2563eb;background:#0f2447}.st.hot{border-color:#22e6ff;background:#0a3b4d;box-shadow:0 0 10px #22e6ff}.st.off{opacity:.3;text-decoration:line-through}
+.pio{font:12px ui-monospace,Consolas,monospace;color:#8fd;margin:8px 0}
+.cards{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}.sc{text-align:left;padding:12px;font-weight:400}.sc b{display:block;color:#fff;margin-bottom:4px}.sc.act{border-color:#22e6ff;background:#0a3b4d}
+summary{cursor:pointer;color:#22e6ff;letter-spacing:2px;font-weight:700}a{color:#7fb4ff}footer{text-align:center;color:#4a6685;padding:16px;font-size:12px}
+@media(max-width:1000px){.c4,.c6,.c8{grid-column:span 12}.herogrid,.cards{grid-template-columns:1fr}}
+
+:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}</style></head><body>
+<header><div class="logo">NAV<span>-CONTINUUM</span></div>
+<div class="sub">AI-ML Intelligent Dead Reckoning<br><small>Team CONTINUUM · RED RECODE REBUILD 2026 · Sri Sairam Engineering College</small></div>
+<div class="badge">SIMULATED DATA · BASELINE MODEL — NO TRAINED ML</div></header>
+<p class="tag">“When GNSS fails, the smartphone becomes the vehicle's navigation sensor.”</p>
+<div class="bar">
+<button id="play">▶ PLAY</button><button id="pause">❚❚ PAUSE</button><button id="reset">⟲ RESET</button>
+<select id="spd"><option value="0.5">0.5×</option><option value="1" selected>1×</option><option value="2">2×</option><option value="4">4×</option></select>
+<button id="demo" class="go">START LIVE DEMO</button>
+<button id="loss" class="bad">SIMULATE GNSS LOSS</button><button id="restore" class="ok">RESTORE GNSS</button></div>
+<div id="narr" class="narr"></div>
+<main>
+<section class="card c8"><h2>LIVE NAVIGATION MAP <i id="scn"></i></h2><canvas id="map" width="900" height="520"></canvas>
+<div class="legend"><b style="color:#fff">— Reference</b><b style="color:#3b82f6">— GNSS-only</b><b style="color:#ff3b4d">— Conventional INS</b><b style="color:#22e6ff">— NAV-CONTINUUM</b></div></section>
+<section class="card c4"><h2>PERFORMANCE DASHBOARD <i>simulated</i></h2><div id="met" class="met"></div>
+<div class="target">PROJECT TARGET: LESS THAN 10% DRIFT<br><small>A design target, not a validated result. Drift % = position error ÷ distance travelled during outage × 100</small></div></section>
+
+<section class="card c12 hero"><h2>VIBRATION → AI VIRTUAL SPEEDOMETER <i>core innovation · illustrative baseline mapping: f = 0.8·v + 2 Hz, speed = (f − 2) / 0.8</i></h2>
+<div class="herogrid"><div><label>Simulated vibration signal</label><canvas id="cVib" width="420" height="120"></canvas><label>Frequency spectrum (0–32 Hz)</label><canvas id="cSpec" width="420" height="150"></canvas></div>
+<div class="big"><small>DOMINANT FREQUENCY</small><b id="hf">–</b><small>ESTIMATED SPEED</small><b id="hv" class="cy">–</b><small>AI CONFIDENCE</small><b id="hc">–</b><div class="note">Vibration frequency is only a <u>cue</u> here. A real system needs a trained model (e.g. on IO-VNBD); none is implemented.</div></div>
+<div><label>Speed-estimation trend</label><canvas id="cSpd" width="420" height="120"></canvas>
+<div class="sl"><label>Real vehicle frequency gain (Hz per m/s) <b id="vfk"></b></label><input id="fk" type="range" min="0.5" max="1.1" step="0.01" value="0.8">
+<label>Noise level <b id="vnz"></b></label><input id="nz" type="range" min="0" max="2" step="0.05" value="0.3">
+<label>Signal strength <b id="vst"></b></label><input id="st" type="range" min="0.1" max="2" step="0.05" value="1"></div></div></div></section>
+
+<section class="card c6"><h2>SMARTPHONE SENSORS <i>simulated</i></h2><div id="sens" class="sens"></div>
+<label>Accelerometer (raw phone axes, m/s²)</label><canvas id="cAcc" width="520" height="80"></canvas>
+<label>Gyroscope z (rad/s)</label><canvas id="cGyr" width="520" height="80"></canvas>
+<div class="sl"><label>Phone orientation (yaw in car) <b id="vph"></b></label><input id="ph" type="range" min="-180" max="180" step="1" value="0"></div></section>
+<section class="card c6"><h2>PROCESSING PIPELINE</h2><div id="pipe" class="pipe"></div><div id="pio" class="pio"></div>
+<label>Position error over time (m)</label><canvas id="cErr" width="520" height="150"></canvas>
+<div class="legend"><b style="color:#ff3b4d">Conventional INS</b><b style="color:#22e6ff">NAV-CONTINUUM</b><b style="color:#3b82f6">GNSS (when available)</b></div></section>
+
+<section class="card c12"><h2>ROAD SCENARIOS</h2><div id="cards" class="cards"></div></section>
+<section class="card c12"><details><summary>RESEARCH &amp; DATASET PANEL</summary>
+<p>The browser demo uses <b>synthetic signals and hand-written baseline algorithms only</b>. IO-VNBD has <b>not</b> been downloaded or used for training; a dataset-trained model is a future extension.</p>
+<ul><li><a target="_blank" href="https://pmc.ncbi.nlm.nih.gov/articles/PMC7907232/">IO-VNBD dataset reference</a></li><li><a target="_blank" href="https://arxiv.org/abs/2005.01701">Learned inertial navigation research</a></li><li><a target="_blank" href="https://www.openstreetmap.org/about">OpenStreetMap</a></li><li><a target="_blank" href="https://sih2026.vuce.in/ps/SIH26168">SIH26168 problem statement</a></li></ul></details></section>
+</main>
+<footer>NAV-CONTINUUM — Continuous Vehicle Navigation Beyond GNSS · Team CONTINUUM · Sri Sairam Engineering College</footer>
+<script>'use strict';
+/* NAV-CONTINUUM — browser simulation. ALL sensor data is SYNTHETIC; speed estimation is a documented
+   baseline (not a trained ML model); ESKF/ZUPT/map-matching are simplified stand-ins (see README). */
+const $=id=>$.c[id]||($.c[id]=document.getElementById(id));$.c={};
+const MPP=0.4,DT=1/64,FS=64,N=128;                         // metres per map pixel, sim step, sample rate, FFT size
+const clamp=(x,a,b)=>Math.min(b,Math.max(a,x)),wrap=a=>Math.atan2(Math.sin(a),Math.cos(a));
+const rn=()=>{let u=0;for(let i=0;i<4;i++)u+=Math.random();return(u-2)*1.73};   // ~N(0,1)
+const dist=(a,b)=>Math.hypot(a.x-b.x,a.y-b.y);
+/* ---------- Route (waypoints smoothed by Chaikin corner cutting) ---------- */
+let R=[[40,450],[300,450],[420,380],[420,200],[560,110],[860,110],[860,300],[700,430],[520,480]];
+for(let k=0;k<4;k++){const q=[R[0]];for(let i=0;i<R.length-1;i++){const a=R[i],b=R[i+1];q.push([.75*a[0]+.25*b[0],.75*a[1]+.25*b[1]],[.25*a[0]+.75*b[0],.25*a[1]+.75*b[1]])}q.push(R[R.length-1]);R=q}
+const SEG=[];let L=0;for(let i=1;i<R.length;i++){const d=Math.hypot(R[i][0]-R[i-1][0],R[i][1]-R[i-1][1]);SEG.push([L,d]);L+=d}
+function pt(s){s=clamp(s,0,L-.01);let i=0;while(i<SEG.length-1&&s>SEG[i][0]+SEG[i][1])i++;const[a,d]=SEG[i],t=(s-a)/d,p=R[i],q=R[i+1];return{x:p[0]+(q[0]-p[0])*t,y:p[1]+(q[1]-p[1])*t,h:Math.atan2(q[1]-p[1],q[0]-p[0])}}
+/* ---------- Scenarios: out = GNSS-obstructed route fractions; each changes signals & trajectory ---------- */
+const SC={normal:{n:'Normal Driving',d:'GNSS available; compare estimates with the reference.',out:[],base:12,start:.02},
+tunnel:{n:'Tunnel',d:'GNSS drops to zero; IMU + vibration speed keep tracking.',out:[[.3,.58]],base:12,start:.05},
+canyon:{n:'Urban Canyon',d:'Noisy, intermittent GNSS; fusion trusts fixes less.',out:[[.3,.72]],canyon:1,base:9,start:.05},
+parking:{n:'Multi-Level Parking',d:'Slow speed, GNSS lost, barometer shows floor changes.',out:[[.3,.8]],park:1,base:6,start:.05},
+recovery:{n:'GNSS Recovery',d:'Longer, harsher outage (2× sensor bias), then correction.',out:[[.2,.5]],base:12,start:.1,bias:2}};
+let sc='tunnel',S,running=false,speed=1,demoOn=false,P={fk:.8,nz:.3,st:1,ph:0};
+function init(){const c=SC[sc],s0=c.start*L,p=pt(s0);
+S={t:0,k:0,s:s0,v:c.base,a:0,yaw:0,vE:c.base,sn:s0,vc:c.base,hc:p.h,pc:{x:p.x,y:p.y},g:{x:p.x,y:p.y},lost:false,force:null,out:0,pk:0,sig:2.5,
+ph:0,cx:0,cy:0,phH:0,aligned:false,fd:0,vv:0,conf:.5,altE:0,alt:0,pr:1013.25,zupt:0,hadOut:0,rec:0,done:false,aAl:0,ax:0,ay:0,gz:0,
+eN:0,eC:0,eG:0,buf:new Array(N).fill(0),spec:new Array(64).fill(0),tr:{r:[],g:[],n:[],c:[]},H:{ax:[],ay:[],gz:[],eN:[],eC:[],eG:[],vr:[],ve:[]}}}
+/* ---------- Vibration processing: Hann-windowed DFT, peak pick with parabolic interpolation ---------- */
+function spectrum(){const m=[];for(let b=0;b<64;b++){let re=0,im=0;for(let n=0;n<N;n++){const v=S.buf[(S.k+1+n)%N]*(.5-.5*Math.cos(6.2832*n/(N-1))),a=6.2832*b*n/N;re+=v*Math.cos(a);im-=v*Math.sin(a)}m.push(Math.hypot(re,im)/N)}
+let pk=4;for(let b=4;b<63;b++)if(m[b]>m[pk])pk=b;const mean=m.slice(2).reduce((x,y)=>x+y,0)/62,d=m[pk-1]-2*m[pk]+m[pk+1],del=d?clamp(.5*(m[pk-1]-m[pk+1])/d,-.5,.5):0;
+S.spec=m;S.pkb=pk;S.fd=(pk+del)*FS/N;S.vv=Math.max(0,(S.fd-2)/.8);                 // baseline mapping: f = 0.8 v + 2
+const rho=m[pk]/(mean+1e-9);return clamp((Math.log10(rho)-.3)/1.2,0,1)}
+/* ---------- One simulation step ---------- */
+function step(){const c=SC[S.k===0&&0?sc:sc];S.t+=DT;S.k++;
+/* 1 vehicle motion (reference truth) */
+const vt=c.base*(.85+.15*Math.sin(S.t*.6)),dv=clamp(vt-S.v,-4*DT,3*DT);S.v+=dv;S.a=dv/DT;
+const h0=pt(S.s).h;S.s+=S.v*DT/MPP;const p=pt(S.s);S.yaw+=(wrap(p.h-h0)/DT-S.yaw)*.05;const fr=S.s/L;
+/* 2 GNSS outage logic */
+const z=c.out.some(o=>fr>=o[0]&&fr<=o[1]),fix=c.canyon&&z&&Math.sin(S.t*2.5)>.3;
+if(S.force===false&&!z)S.force=null;const lost=S.force===null?(z&&!fix):S.force;
+if(lost&&!S.lost){S.out=0;S.pk=0;S.vc=S.v;S.hc=p.h;S.hadOut=1;S.rec=0}if(!lost&&S.lost)S.rec=1;S.lost=lost;S.z=z;
+/* 3 synthetic sensors */
+const lat=clamp(S.v*S.yaw,-5,5),ph=P.ph*Math.PI/180,sn=.05+.05*P.nz;
+S.ax=Math.cos(ph)*S.a-Math.sin(ph)*lat+sn*rn();S.ay=Math.sin(ph)*S.a+Math.cos(ph)*lat+sn*rn();S.gz=S.yaw+.01*rn();
+const fT=P.fk*S.v+2;S.ph+=6.2832*fT*DT;S.buf[S.k%N]=P.st*(Math.sin(S.ph)+.35*Math.sin(2*S.ph+1))+(.1+.6*P.nz)*rn();
+S.alt=c.park?-9.6*Math.pow(Math.sin(Math.PI*clamp((fr-.3)/.5,0,1)),2):.6*Math.sin(fr*8);S.pr=1013.25-.12*S.alt+.02*rn();S.altE+=((1013.25-S.pr)/.12-S.altE)*.02;
+/* 4 phone→vehicle alignment (simplified): lateral accel correlates with yaw rate → phone yaw φ̂ */
+S.cx=.9995*S.cx+S.ax*S.gz;S.cy=.9995*S.cy+S.ay*S.gz;S.aligned=Math.hypot(S.cx,S.cy)>5;S.phH=Math.atan2(-S.cx,S.cy);
+S.aAl=S.aligned?clamp(S.ax*Math.cos(S.phH)+S.ay*Math.sin(S.phH),-4,4):0;
+/* 5 speed estimate: accel prediction + vibration correction; ZUPT when stationary */
+S.vE+=S.aAl*DT;
+if(S.k%8===0){const cv=spectrum();S.conf+=(cv*(S.aligned?1:.85)-S.conf)*.2;S.vE+=(.1+.4*S.conf)*(S.vv-S.vE);
+ S.zupt=(S.vv<.6&&Math.abs(S.aAl)<.3)?1:0;if(S.zupt)S.vE*=.9;S.vE=Math.max(0,S.vE)}
+/* 6 positions */
+const cn=c.canyon&&z;
+if(!lost){S.g={x:p.x+(cn?12:1.5)*rn(),y:p.y+(cn?12:1.5)*rn()}}
+if(lost){const b=c.bias||1;S.vc+=(S.a+.12*b+.03*rn())*DT;S.hc+=(S.yaw+.012*b+.002*rn())*DT;S.pc.x+=S.vc*Math.cos(S.hc)*DT/MPP;S.pc.y+=S.vc*Math.sin(S.hc)*DT/MPP;S.out+=S.v*DT}
+else{S.vc=S.v;S.hc=p.h;S.pc.x+=.05*(S.g.x-S.pc.x);S.pc.y+=.05*(S.g.y-S.pc.y)}
+S.sn+=S.vE*DT/MPP;                                                         // NAV: speed integrated along road (constraint + map-match)
+if(!lost){const sg=S.s+(cn?12:1.5)*rn();S.sn+=(cn?.0015:.006)*(sg-S.sn)}   // confidence-aware GNSS/INS fusion (complementary stand-in for ESKF)
+S.sn=clamp(S.sn,0,L-.01);
+S.sig=lost?S.sig+(.02+.06*(1-S.conf))*S.v*DT:S.sig+((cn?6:2.5)-S.sig)*.02;
+S.eN=dist(pt(S.sn),p)*MPP;S.eC=dist(S.pc,p)*MPP;S.eG=dist(S.g,p)*MPP;if(lost)S.pk=Math.max(S.pk,S.eN);
+if(S.k%8===0){const H=S.H,push=(a,v)=>{a.push(v);if(a.length>200)a.shift()};push(H.ax,S.ax);push(H.ay,S.ay);push(H.gz,S.gz);push(H.eN,S.eN);push(H.eC,S.eC);push(H.eG,lost?null:S.eG);push(H.vr,S.v);push(H.ve,S.vE)}
+if(S.k%6===0){const T=S.tr,q=(a,x)=>{a.push([x.x,x.y]);if(a.length>700)a.shift()};q(T.r,p);if(!lost)q(T.g,S.g);q(T.n,pt(S.sn));q(T.c,S.pc)}
+if(S.s>=L-3){S.done=true;running=false}}
+/* ---------- Drawing ---------- */
+function line(x,a,col,w,dash){if(a.length<2)return;x.beginPath();x.setLineDash(dash||[]);x.strokeStyle=col;x.lineWidth=w;a.forEach((q,i)=>i?x.lineTo(q[0],q[1]):x.moveTo(q[0],q[1]));x.stroke();x.setLineDash([])}
+function drawMap(){const x=$('map').getContext('2d'),c=SC[sc];x.clearRect(0,0,900,520);x.strokeStyle='#0c1b36';x.lineWidth=1;for(let i=0;i<900;i+=40){x.beginPath();x.moveTo(i,0);x.lineTo(i,520);x.stroke()}for(let i=0;i<520;i+=40){x.beginPath();x.moveTo(0,i);x.lineTo(900,i);x.stroke()}
+line(x,R,'#16263f',26);line(x,R,'#24385a',20);line(x,R,'#3b5b88',1,[8,10]);
+c.out.forEach(o=>{const a=[];for(let s=o[0]*L;s<=o[1]*L;s+=6){const p=pt(s);a.push([p.x,p.y])}line(x,a,'rgba(255,59,77,.35)',30);const m=pt((o[0]+o[1])/2*L);x.fillStyle='#ff7a86';x.font='bold 12px sans-serif';x.fillText(c.canyon?'URBAN CANYON':c.park?'PARKING STRUCTURE':'GNSS OUTAGE ZONE',m.x+20,m.y)});
+const T=S.tr;line(x,T.r,'rgba(255,255,255,.8)',2,[6,6]);line(x,T.g,'#3b82f6',2);line(x,T.c,'#ff3b4d',2.5);line(x,T.n,'#22e6ff',3);
+const p=pt(S.s),n=pt(S.sn);
+x.strokeStyle='#3b82f6';x.fillStyle='#3b82f6';x.beginPath();x.arc(S.g.x,S.g.y,5,0,7);S.lost?x.stroke():x.fill();if(S.lost){x.fillText('GNSS FROZEN',S.g.x+8,S.g.y-8)}
+x.fillStyle='#ff3b4d';x.save();x.translate(S.pc.x,S.pc.y);x.rotate(.785);x.fillRect(-5,-5,10,10);x.restore();
+x.strokeStyle='#22e6ff';x.lineWidth=3;x.beginPath();x.arc(n.x,n.y,11+2*Math.sin(S.t*6),0,7);x.stroke();
+x.save();x.translate(p.x,p.y);x.rotate(p.h);x.fillStyle='#e8f1ff';x.beginPath();x.roundRect(-14,-7,28,14,4);x.fill();x.fillStyle='#0b1730';x.fillRect(2,-5,6,10);x.fillStyle='#ff3b4d';x.fillRect(-14,-6,2,4);x.fillRect(-14,2,2,4);x.restore();
+if(S.lost){x.fillStyle='rgba(0,0,0,.35)';x.fillRect(0,0,900,520);x.fillStyle='#ff3b4d';x.font='bold 26px sans-serif';x.fillText('GNSS SIGNAL LOST',300,40);x.font='13px sans-serif';x.fillStyle='#fff';x.fillText('Tunnel / obstruction — navigating on smartphone IMU + vibration speed',230,62)}}
+function plot(id,ser,o={}){const c=$(id),x=c.getContext('2d'),w=c.width,h=c.height;x.clearRect(0,0,w,h);let mn=o.min,mx=o.max;
+if(mn===undefined||mx===undefined){let a=1e9,b=-1e9;ser.forEach(s=>s.d.forEach(v=>{if(v!=null){a=Math.min(a,v);b=Math.max(b,v)}}));if(a>b){a=0;b=1}mn=mn??a;mx=mx??b}if(mx-mn<1e-6)mx=mn+1;
+x.strokeStyle='#1c3350';x.strokeRect(.5,.5,w-1,h-1);ser.forEach(s=>{x.strokeStyle=s.col;x.lineWidth=1.6;x.beginPath();let on=false;s.d.forEach((v,i)=>{if(v==null){on=false;return}const X=i/(o.n||200)*w,Y=h-4-(v-mn)/(mx-mn)*(h-8);on?x.lineTo(X,Y):x.moveTo(X,Y);on=true});x.stroke()});
+x.fillStyle='#7fa0c0';x.font='11px sans-serif';x.fillText(mx.toFixed(1)+' / '+mn.toFixed(1),6,13)}
+function drawSpec(){const c=$('cSpec'),x=c.getContext('2d'),w=c.width,h=c.height;x.clearRect(0,0,w,h);const m=S.spec,mx=Math.max(.05,...m),bw=w/64;
+m.forEach((v,i)=>{x.fillStyle=i===S.pkb?'#22e6ff':'#2563eb';const bh=v/mx*(h-18);x.fillRect(i*bw,h-14-bh,bw-1,bh)});x.fillStyle='#7fa0c0';x.font='10px sans-serif';[0,8,16,24,32].forEach(f=>x.fillText(f+'Hz',f/32*(w-24),h-2))}
+/* ---------- UI ---------- */
+const MET=[['rv','Reference speed'],['ev','NAV est. speed'],['rp','Reference pos'],['gp','GNSS-only pos'],['np','NAV-CONTINUUM pos'],['od','Outage distance'],['er','NAV error'],['ce','Conventional INS error'],['dr','Drift % (NAV)'],['cf','Confidence'],['el','Relative elevation'],['ga','GNSS status'],['sg','Uncertainty (1σ)'],['hd','Est. heading']];
+$('met').innerHTML=MET.map(m=>`<div class="m"><small>${m[1]}</small><b id="m_${m[0]}">–</b></div>`).join('');
+const STG=['Phone IMU + Barometer','Phone–Vehicle Alignment','IMU + Vibration Processing','AI Speed + Confidence*','ZUPT*','Vehicle Constraints*','Offline Map Match*','ESKF Fusion*','GNSS/INS Fusion','Continuous Position'];
+$('pipe').innerHTML=STG.map((s,i)=>`<div class="st" id="s${i}" title="${s.endsWith('*')?'Simplified / baseline stand-in':''}">${i+1}. ${s}</div>`).join('');
+$('cards').innerHTML=Object.keys(SC).map(k=>`<button class="sc" id="k_${k}"><b>${SC[k].n}</b>${SC[k].d}</button>`).join('');
+Object.keys(SC).forEach(k=>$('k_'+k).onclick=()=>pick(k));
+function pick(k,keep){sc=k;init();if(!keep)demoOn=false;running=true;Object.keys(SC).forEach(j=>$('k_'+j).classList.toggle('act',j===k));$('scn').textContent='— '+SC[k].n}
+function ui(){const f=(v,d=1)=>v.toFixed(d),xy=p=>`(${f(p.x*MPP,0)}, ${f(p.y*MPP,0)}) m`,M=(k,t)=>$('m_'+k).textContent=t,n=pt(S.sn),p=pt(S.s);
+const drift=S.out>1?S.eN/S.out*100:0;
+M('rv',f(S.v*3.6,0)+' km/h');M('ev',f(S.vE*3.6,0)+' km/h');M('rp',xy(p));M('gp',xy(S.g));M('np',xy(n));M('od',f(S.out,0)+' m');M('er',f(S.eN)+' m');M('ce',f(S.eC)+' m');M('dr',f(drift)+' %');M('cf',f(S.conf*100,0)+' %');M('el',f(S.altE)+' m (floor '+Math.round(S.altE/3.2)+')');M('sg',f(S.sig)+' m');M('hd',f(((n.h*180/Math.PI)%360+360)%360,0)+'°');
+$('m_ga').textContent=S.lost?'SIGNAL LOST':'AVAILABLE';$('m_ga').style.color=S.lost?'#ff3b4d':'#2dd4a0';
+$('hf').textContent=f(S.fd)+' Hz';$('hv').textContent=f(S.vE*3.6,0)+' km/h';$('hc').textContent=f(S.conf*100,0)+' %';
+$('sens').innerHTML=[['Accel long','ax',f(S.aAl,2)+' m/s²'],['Accel lat',0,f(S.ay,2)+' m/s²'],['Gyro z',0,f(S.gz*57.3,1)+' °/s'],['Baro',0,f(S.pr,2)+' hPa'],['Rel. alt',0,f(S.altE)+' m'],['φ̂ (phone yaw)',0,S.aligned?f(S.phH*57.3,0)+'° (true '+P.ph+'°)':'aligning…']].map(a=>`<div class="m"><small>${a[0]}</small><b>${a[2]}</b></div>`).join('');
+const hot=Math.floor(S.t*5)%10;STG.forEach((_,i)=>{const e=$('s'+i);e.className='st on'+(i===hot&&running?' hot':'')+((i===8&&S.lost)||(i===4&&!S.zupt&&0)?' off':'')});
+$('pio').textContent=`IN a=${f(S.ax,1)},${f(S.ay,1)} ω=${f(S.gz,2)} | v̂=${f(S.vE,1)} m/s | hdg=${f(n.h*57.3,0)}° | σ=${f(S.sig)} m | pos=${xy(n)}`;
+const ord=[];for(let i=0;i<N;i++)ord.push(S.buf[(S.k+1+i)%N]);
+plot('cVib',[{d:ord,col:'#22e6ff'}],{n:N-1,min:-3,max:3});drawSpec();plot('cSpd',[{d:S.H.vr,col:'#fff'},{d:S.H.ve,col:'#22e6ff'}],{min:0});
+plot('cAcc',[{d:S.H.ax,col:'#3b82f6'},{d:S.H.ay,col:'#ff3b4d'}]);plot('cGyr',[{d:S.H.gz,col:'#22e6ff'}]);
+plot('cErr',[{d:S.H.eC,col:'#ff3b4d'},{d:S.H.eN,col:'#22e6ff'},{d:S.H.eG,col:'#3b82f6'}],{min:0});
+let t='';if(demoOn){t=S.done?`④ RESULT — final NAV-CONTINUUM error ${f(S.eN)} m vs conventional INS ${f(S.eC)} m · peak NAV drift during outage ${f(S.out>1?S.pk/S.out*100:0)} % (simulated; project target <10 %, not validated)`:S.lost?'② GNSS LOST — GNSS-only frozen (blue ring), conventional INS drifts (red), NAV-CONTINUUM continues on vibration-speed + constraints (cyan)':S.rec?'③ GNSS RESTORED — fusion pulls the estimate back to the reference':'① Normal driving — GNSS and NAV-CONTINUUM track the reference; watch the vibration speedometer'}
+else if(S.done)t='Route finished — press RESET or pick a scenario.';$('narr').textContent=t}
+/* ---------- Controls & loop ---------- */
+$('play').onclick=()=>{if(S.done)init();running=true};$('pause').onclick=()=>running=false;$('reset').onclick=()=>{init();demoOn=false;running=false};
+$('spd').onchange=e=>speed=+e.target.value;
+$('loss').onclick=()=>S.force=true;$('restore').onclick=()=>S.force=false;
+$('demo').onclick=()=>{pick('tunnel',1);demoOn=true;speed=1;$('spd').value='1'};
+[['fk','vfk'],['nz','vnz'],['st','vst'],['ph','vph']].forEach(([i,o])=>{const u=()=>{P[i]=+$(i).value;$(o).textContent=P[i]};$(i).oninput=u;u()});
+let last=performance.now(),acc=0;
+function loop(now){const dt=Math.min(.1,(now-last)/1000);last=now;if(running){acc+=dt*speed*FS;let n=Math.floor(acc);acc-=n;while(n-->0&&running)step()}drawMap();ui();requestAnimationFrame(loop)}
+pick('tunnel');running=false;requestAnimationFrame(loop);
+</script></body></html>
